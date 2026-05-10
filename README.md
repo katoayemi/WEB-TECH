@@ -33,7 +33,7 @@ student-registration/
 ├── .env.example               ← Copy to .env and fill in secrets
 ├── .gitignore
 ├── package.json
-└── README.md
+
 ```
 
 ---
