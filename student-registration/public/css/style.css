@@ -1,333 +1,84 @@
-/* ~~ VOID  ~~~ */
-
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700&display=swap');
-
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
+/* Voids Domain */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-body{
-    height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    overflow:hidden;
-
-    font-family:'Space Grotesk',sans-serif;
-
-    background:#060816;
-    position:relative;
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
 }
 
-
-body::before{
-    content:"";
-    position:absolute;
-    inset:0;
-
-    background:
-    linear-gradient(rgba(0,255,255,0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0,255,255,0.05) 1px, transparent 1px);
-
-    background-size:40px 40px;
-
-    animation:gridMove 12s linear infinite;
+.container, .form-container {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  padding: 40px 45px;
+  border-radius: 20px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+  width: 100%;
+  max-width: 420px;
+  text-align: center;
 }
 
-@keyframes gridMove{
-    from{
-        transform:translateY(0);
-    }
-    to{
-        transform:translateY(40px);
-    }
+h1, .title, #title {
+  color: #2c3e50;
+  margin-bottom: 30px;
+  font-size: 28px;
+  font-weight: 600;
 }
 
-body::after{
-    content:"";
-    position:absolute;
-
-    width:500px;
-    height:500px;
-
-    border-radius:50%;
-
-    background:radial-gradient(circle,
-    rgba(0,255,255,0.18),
-    transparent 70%);
-
-    filter:blur(80px);
-
-    animation:pulse 5s ease-in-out infinite;
+label {
+  display: block;
+  margin-bottom: 8px;
+  color: #34495e;
+  font-weight: 500;
+  font-size: 15px;
+  text-align: left;
 }
 
-@keyframes pulse{
-    0%,100%{
-        transform:scale(1);
-    }
-    50%{
-        transform:scale(1.12);
-    }
+input {
+  width: 100%;
+  padding: 14px 16px;
+  border: 2px solid #e0e0e0;
+  border-radius: 10px;
+  font-size: 16px;
+  background: white;
+  transition: all 0.3s ease;
 }
 
-.container{
-    position:relative;
-    z-index:5;
-
-    width:420px;
-    padding:45px;
-
-    border-radius:28px;
-
-    background:rgba(10,15,30,0.72);
-
-    backdrop-filter:blur(18px);
-
-    border:1px solid rgba(0,255,255,0.18);
-
-    box-shadow:
-    0 0 20px rgba(0,255,255,0.08),
-    0 0 70px rgba(0,255,255,0.04);
-
-    overflow:hidden;
+input:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
 }
 
-.container::before{
-    content:"";
-    position:absolute;
-
-    inset:-2px;
-
-    border-radius:30px;
-
-    padding:2px;
-
-    background:linear-gradient(
-    135deg,
-    #00ffff,
-    #00bfff,
-    #7f5cff,
-    #00ffff
-    );
-
-    background-size:400% 400%;
-
-    animation:borderFlow 6s linear infinite;
-
-    -webkit-mask:
-    linear-gradient(#fff 0 0) content-box,
-    linear-gradient(#fff 0 0);
-
-    -webkit-mask-composite:xor;
-            mask-composite:exclude;
-
-    pointer-events:none;
+button, input[type="submit"] {
+  width: 100%;
+  padding: 14px;
+  margin-top: 15px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-@keyframes borderFlow{
-    0%{
-        background-position:0% 50%;
-    }
-    100%{
-        background-position:300% 50%;
-    }
+button:hover, input[type="submit"]:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 25px rgba(102, 126, 234, 0.35);
 }
 
-.container h1{
-    text-align:center;
-
-    color:white;
-
-    margin-bottom:35px;
-
-    font-size:2rem;
-    font-weight:700;
-
-    letter-spacing:3px;
-
-    text-transform:uppercase;
-}
-
-.container h1 span{
-    color:#00ffff;
-
-    text-shadow:
-    0 0 10px #00ffff,
-    0 0 25px #00ffff;
-}
-
-label{
-    display:block;
-
-    margin-bottom:10px;
-
-    color:#c8faff;
-
-    font-size:14px;
-
-    letter-spacing:1px;
-}
-
-input{
-    width:100%;
-
-    padding:16px;
-
-    margin-bottom:26px;
-
-    border:none;
-    outline:none;
-
-    border-radius:16px;
-
-    background:rgba(255,255,255,0.04);
-
-    color:white;
-
-    font-size:15px;
-
-    transition:0.35s ease;
-
-    border:1px solid transparent;
-}
-
-input:focus{
-    border:1px solid #00ffff;
-
-    background:rgba(0,255,255,0.06);
-
-    box-shadow:
-    0 0 15px rgba(0,255,255,0.35);
-
-    transform:translateY(-2px);
-}
-
-input::placeholder{
-    color:#7ea8b4;
-}
-
-button{
-    width:100%;
-
-    padding:15px;
-
-    border:none;
-
-    border-radius:18px;
-
-    cursor:pointer;
-
-    color:#041018;
-
-    font-size:15px;
-    font-weight:700;
-
-    letter-spacing:2px;
-
-    text-transform:uppercase;
-
-    background:linear-gradient(
-    135deg,
-    #00ffff,
-    #00bfff
-    );
-
-    transition:0.35s ease;
-
-    box-shadow:
-    0 0 20px rgba(0,255,255,0.35);
-}
-
-button:hover{
-    transform:translateY(-4px) scale(1.02);
-
-    box-shadow:
-    0 0 25px rgba(0,255,255,0.65),
-    0 0 60px rgba(0,255,255,0.2);
-}
-
-.particle{
-    position:absolute;
-
-    width:6px;
-    height:6px;
-
-    border-radius:50%;
-
-    background:#00ffff;
-
-    box-shadow:0 0 12px #00ffff;
-
-    animation:float 6s infinite ease-in-out;
-}
-
-.particle:nth-child(1){
-    top:18px;
-    left:18px;
-}
-
-.particle:nth-child(2){
-    top:30px;
-    right:30px;
-
-    animation-delay:2s;
-}
-
-.particle:nth-child(3){
-    bottom:25px;
-    left:40px;
-
-    animation-delay:1s;
-}
-
-@keyframes float{
-    0%,100%{
-        transform:translateY(0);
-        opacity:0.4;
-    }
-    50%{
-        transform:translateY(-12px);
-        opacity:1;
-    }
-}
-
-
-body::before,
-body::after,
-.container::before,
-.container::after{
-    pointer-events: none;
-}
-
-.container{
-    position: relative;
-    z-index: 10;
-}
-
-input,
-button{
-    position: relative;
-    z-index: 20;
-}
-
-.container h1{
-    color: #89D6FF !important;
-
-    font-size: 2rem;
-    font-weight: 700;
-
-    text-align: center;
-
-    text-shadow:
-    0 0 10px rgba(0,140,255,0.5),
-    0 0 22px rgba(0,80,180,0.35);
-
-    position: relative;
-    z-index: 50;
-}
-.container{
-    position:relative;
-    z-index:10;
+@media (max-width: 480px) {
+  .container, .form-container {
+    padding: 30px 25px;
+  }
 }
