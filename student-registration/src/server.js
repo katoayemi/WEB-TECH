@@ -9,7 +9,7 @@ const morgan      = require('morgan');
 const rateLimit   = require('express-rate-limit');
 const path        = require('path');
 
-const { testConnection }  = require('./config/db');
+require('./config/db');
 const studentRoutes       = require('./routes/studentRoutes');
 const { errorHandler, notFound } = require('./middleware/errorHandler');
 
@@ -23,10 +23,27 @@ app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      scriptSrc:  ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
-      styleSrc:   ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com",
-                   "https://fonts.gstatic.com"],
-      fontSrc:    ["'self'", "https://fonts.gstatic.com"],
+
+      scriptSrc: [
+        "'self'",
+        "'unsafe-inline'"
+      ],
+
+      styleSrc: [
+        "'self'",
+        "'unsafe-inline'",
+        "https://fonts.googleapis.com"
+      ],
+
+      fontSrc: [
+        "'self'",
+        "https://fonts.gstatic.com"
+      ],
+
+      imgSrc: [
+        "'self'",
+        "data:"
+      ]
     },
   },
 }));
@@ -40,13 +57,15 @@ const allowedOrigins = (process.env.ALLOWED_ORIGINS || '')
   .filter(Boolean);
 
 app.use(cors({
-  origin: (origin, cb) => {
-    // Allow non-browser tools (Postman, curl) and allowed origins
-    if (!origin || allowedOrigins.includes(origin)) return cb(null, true);
-    cb(new Error(`CORS: origin ${origin} not allowed`));
-  },
-  methods:     ['GET', 'POST', 'OPTIONS'],
-  credentials: true,
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.length === 0 || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+
+    return callback(new Error('Not allowed by CORS'));
+  }
 }));
 
 // ─────────────────────────────────────────────
@@ -54,11 +73,15 @@ app.use(cors({
 // ─────────────────────────────────────────────
 const limiter = rateLimit({
   windowMs: Number(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000,
-  max:      Number(process.env.RATE_LIMIT_MAX)        || 100,
+  max: Number(process.env.RATE_LIMIT_MAX) || 100,
   standardHeaders: true,
-  legacyHeaders:   false,
-  message: { success: false, message: 'Too many requests. Please try again later.' },
+  legacyHeaders: false,
+  message: {
+    success: false,
+    message: 'Too many requests. Please try again later.'
+  },
 });
+
 app.use('/api', limiter);
 
 // ─────────────────────────────────────────────
@@ -66,10 +89,13 @@ app.use('/api', limiter);
 // ─────────────────────────────────────────────
 app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: true, limit: '10kb' }));
-app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'));
+
+app.use(
+  morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev')
+);
 
 // ─────────────────────────────────────────────
-// Static files  (serves public/ at root)
+// Static files
 // ─────────────────────────────────────────────
 app.use(express.static(path.join(__dirname, '..', 'public')));
 
@@ -78,31 +104,37 @@ app.use(express.static(path.join(__dirname, '..', 'public')));
 // ─────────────────────────────────────────────
 app.use('/api/students', studentRoutes);
 
-// Health-check endpoint (useful for load balancers)
-app.get('/api/health', (_req, res) => res.json({ status: 'ok' }));
+// Health check
+app.get('/api/health', (_req, res) => {
+  res.json({ status: 'ok' });
+});
 
-// Serve index.html for all other GET requests (SPA fallback)
-app.get('*', (_req, res) => {
+// SPA fallback
+app.get(/.*/, (_req, res) => {
   res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
 });
 
 // ─────────────────────────────────────────────
-// Error handlers (must be last)
+// Error handlers
 // ─────────────────────────────────────────────
 app.use(notFound);
 app.use(errorHandler);
 
 // ─────────────────────────────────────────────
-// Start
+// Start server
 // ─────────────────────────────────────────────
 async function start() {
-  await testConnection();
+  
+
   app.listen(PORT, () => {
     console.log(`🚀 Server running → http://localhost:${PORT}`);
-    console.log(`   Environment : ${process.env.NODE_ENV}`);
+    console.log(`Environment : ${process.env.NODE_ENV}`);
   });
 }
 
-start();
+start().catch((err) => {
+  console.error('Failed to start server:', err);
+  process.exit(1);
+});
 
-module.exports = app; // for testing
+module.exports = app;

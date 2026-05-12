@@ -12,7 +12,7 @@ USE student_registration;
 -- ─────────────────────────────────────────────
 -- Table: students
 -- ─────────────────────────────────────────────
-CREATE TABLE IF NOT EXISTS students (
+CREATE TABLE IF NOT EXISTS student (
   id          CHAR(36)        NOT NULL PRIMARY KEY,
   name        VARCHAR(100)    NOT NULL,
   roll_number VARCHAR(20)     NOT NULL UNIQUE,

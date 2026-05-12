@@ -8,11 +8,8 @@ const {
   logAction,
 } = require('../models/studentModel');
 
-// ─────────────────────────────────────────────
-// POST /api/students  — Register a new student
-// ─────────────────────────────────────────────
+// POST /api/students
 async function register(req, res) {
-  // 1. Validate request body
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(422).json({
@@ -22,49 +19,63 @@ async function register(req, res) {
     });
   }
 
-  const { name, roll } = req.body;
+  const { name, rollNumber } = req.body;
 
-  // 2. Duplicate roll-number check
-  const existing = await findByRollNumber(roll);
-  if (existing) {
-    return res.status(409).json({
+  try {
+    // duplicate check
+    const existing = await findByRollNumber(rollNumber);
+
+    if (existing) {
+      return res.status(409).json({
+        success: false,
+        message: `Roll number "${rollNumber}" already exists.`,
+      });
+    }
+
+    // insert
+    const student = await createStudent({ name, rollNumber });
+
+    // optional log (non-blocking)
+    logAction({
+      action: 'CREATE',
+      ipAddress: req.ip,
+    }).catch(console.error);
+
+    return res.status(201).json({
+      success: true,
+      message: 'Student registered successfully',
+      data: student,
+    });
+
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({
       success: false,
-      message: `Roll number "${roll}" is already registered.`,
+      message: 'Server error',
     });
   }
-
-  // 3. Persist
-  const student = await createStudent({ name, rollNumber: roll });
-
-  // 4. Audit log (non-blocking)
-  logAction({
-    action:     'CREATE',
-    ipAddress:  req.ip,
-  }).catch(err => console.error('Audit log error:', err));
-
-  return res.status(201).json({
-    success: true,
-    message: 'Student registered successfully.',
-    data: {
-      name: student.name,
-      rollNumber: student.rollNumber,
-    },
-  });
 }
 
-// ─────────────────────────────────────────────
-// GET /api/students  — List all students
-// ─────────────────────────────────────────────
+// GET /api/students
 async function list(req, res) {
-  const page  = Math.max(1, parseInt(req.query.page,  10) || 1);
-  const limit = Math.min(100, parseInt(req.query.limit, 10) || 20);
+  try {
+    const page = Math.max(1, parseInt(req.query.page, 10) || 1);
+    const limit = Math.min(100, parseInt(req.query.limit, 10) || 20);
 
-  const data = await getAllStudents({ page, limit });
+    const data = await getAllStudents({ page, limit });
 
-  return res.json({
-    success: true,
-    ...data,
-  });
+    return res.json({
+      success: true,
+      ...data,
+    });
+
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({
+      success: false,
+      message: 'Server error',
+    });
+  }
 }
 
 module.exports = { register, list };
